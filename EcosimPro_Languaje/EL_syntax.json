@@ -1,0 +1,1049 @@
+{
+    "language": "EL",
+    "version": "7.0",
+    "description": "Object-oriented language focused on continuous and discrete simulation and modeling.",
+    "data_and_variables": [
+        {
+            "data_types": [
+                {
+                    "name": "REAL",
+                    "example": "REAL z = 0.1"
+                },
+                {
+                    "name": "INTEGER",
+                    "example": "INTEGER j = 3"
+                },
+                {
+                    "name": "BOOLEAN",
+                    "example": "BOOLEAN bool = TRUE"
+                },
+                {
+                    "name": "STRING",
+                    "example": "STRING str = \"Hello\""
+                },
+                {
+                    "name": "FILEPATH",
+                    "example": "FILEPATH fpath = \"@MY_LIBRARY@/MY_LIBRARY.lsp.xml\""
+                },
+                {
+                    "name": "TABLE_1D",
+                    "example": "TABLE_1D t1d = {{1,2,3,10}, {5,6,7,8}}"
+                },
+                {
+                    "name": "TABLE_2D",
+                    "example": "TABLE_2D t2d = {{10,20,30}, {1,2,3}, {{100,200,300},{400,1000,600},{700,800,900}}}"
+                },
+                {
+                    "name": "TABLE_3D",
+                    "example": "TABLE_3D t3d = {{1,2,3},{5,7},{1,2}, {{{10,7.5},{8,5}},{{500,750},{10,25}},{{5,1},{8,5}}}}"
+                },
+                {
+                    "name": "ENUM",
+                    "example": "ENUM fuel = {Gasoline, Diesel, NaturalGas, Hydrogen} -- declaration of the enumerative variable\n\nENUM fuel propellant = Gasoline",
+                    "description": "An enumerative defines a set of valid names for a type"
+                },
+                {
+                    "name": "SET_OF",
+                    "example": "SET_OF(fuel) liq_fuel = {Gasoline, Diesel}\n\nENUM liq_fuel propellant = Gasoline",
+                    "description": "A SET_OF is a subtype of an enumerative",
+                    "notes": "The function ENUM setofElem(ENUM type, INTEGER pos) returns the enumerative at position pos, for example \nENUM Chemicals = {N2, H2O, CO2, N2, O2, H2SO4 }\nENUM Chemicals myChem\nmyChem= setofElem(Chemicals,3)) returns CO2.\nThe function INTEGER setofSize(ENUM type) return the size of an enumerative or SET_OF, for example:\nsize= setofSize(Chemicals)\nreturns 6\nThe function ENUM setofElem(ENUM type, INTEGER pos) return the enumerative in position pos, for example:\nENUM Chemicals m\nm= setofElem(Chemicals,2)\nreturns H2O\nThe function ENUM setofElemString(ENUM type, STRING st) is identical to setofElem() but returns the value in string format, for example:\nSTRING st\nst= setofElemString(Chemicals,2)\nreturns H2O\nThe function STRING gvalEnumByType(ENUM GeneralEnumType type,ENUM GeneralEnumType x) returns the enumerative value of x in string format, for example:\nSTRING type\ntype= gvalEnumByType(Chemicals,CO2)\nit sets \"CO2\" to type variable"
+                },
+                {
+                    "name": "NO_TYPE",
+                    "example": "NO_TYPE FUNCTION exec()\nBODY\nEND FUNCTION",
+                    "description": "NO_TYPE is used when a function do not return any value (void in C++)"
+                },
+                {
+                    "name": "FUNC_PTR",
+                    "example": "FUNCTION REAL func_example1(IN REAL a, OUT STRING b)\nBODY\n\tRETURN a+10\nEND FUNCTION\n-- define a valid component\nCOMPONENT comp_func_ptrFun\nDECLS\n\tFUNC_PTR <func_ptrFun > ptr= func_example1\nEND COMPONENT\n",
+                    "description": "EL allows function pointers with keyword FUNC_PTR. There are two types of function pointers: generic function pointers (eg. FUNC_PTR ptr) and specific function pointers. You can use TYPEDEF to define a function pointer: \"TYPEDEF FUNCTION REAL func_ptrFun (IN REAL a, OUT STRING b)\" This definition states that the function type \"ptrFun\" has 2 arguments. The first argument is IN REAL and the second, OUT string and it is returning a real value. Then, the user can create a pointer to this type of function, but you will always need to initialize to a valid function. Later on you can use this pointer as a regular function: result = ptr(34, \"hello\") ",
+                    "notes": ""
+                }
+            ]
+        },
+        {
+            "arrays": {
+                "description": "EL supports arrays. An array is a collection of data items stored contiguously in memory, each accessed by its index.\nArrays are dimensioned with constants or parameters of type integer, enumeration ENUM or SET_OF derived types.\nNormally a one-dimensional array is called a vector, and when it has more dimensions it is called a matrix.\nFor an array dimensioned with an integer value the index is one-based. For example, declaring\n\tREAL v[3]\n\tFor an array dimensioned with an enumeration type or a SET_OF derived type, the index is from the first element of the\ntype up to the last. For example:\nENUM Chemicals = { CO2, H2O, O2 }\nREAL v[Chemicals]\nValid indexes are then [CO2], v[H2O] and v[02]",
+                "example": "REAL v[2,3]= { {1,2,3},{ 4,5,6 } }\nINTEGER i[2,3,2]= { { {1,2},{3,4},{5,6}},{{7,8},{9,10},{10,11}}}\nBOOLEAN b[2]= { FALSE, TRUE }\nENUM Chemicals v[2]= { H2O, H2O }\nENUM Chemicals w[Chemicals]= {CO2, H2O, CO2}\n"
+            }
+        },
+        {
+            "constants": {
+                "description": "EL allows the use of constants. When a variable is declared with the qualifier CONST,  this indicates that it should remain constant. As constants must be initialised when declared and they cannot be modify at simulation time. To declare a constant, simply precede the declaration with the keyword CONST",
+                "example": "CONST REAL PI = 3.1415926\nCONST INTEGER numberOfValves = 5"
+            }
+        },
+        {
+            "units": {
+                "description": [
+                    "When a variable is declared, the user may specify the units by using the reserved word UNITS followed by a string (delimited by quotation marks). This is optional and just for informative reasons.",
+                    "The MATH library of EcosimPro contains a file named \"Units.el\" with the set of standard units used in the libraries. They are variables that can be used everywhere. The use of these constants will make the modelling more homogeneous in all disciplines and they substitute the string. For example, instead of UNITS \"m\", the user can import MATH (by writing USE MATH at the beginning of the document) and write UNITS u_m",
+                    "USE MATH must be written at the beginning of the document to use the standarized units",
+                    "To use units, the user can check if they exist in \"Units.el\". If they do, it must be imported and the units can be written in the standarized form. If they don't, they can be written as an array.",
+                    "\"Units.el\" lines have this structure: PRIVATE CONST STRING u_W_C =  \"W/degC\" \"Watts per Celsius\""
+                ],
+                "example": [
+                    "USE MATH\nCONST REAL g = 9.806 UNITS u_m_s2 \"Gravity acceleration\"\nCONST REAL rho = 1000. UNITS u_kg_m3 \"Density of water\"\nREAL cp = 4186. UNITS u_J_kgK \"Specific heat of water\"\n",
+                    "COMPONENT Comp1(\nDECLS\n\tREAL x[n] UNITS \"m\"\nREAL H UNITS \"mol/l\"\nEND COMPONENT",
+                    "USE MATH\n\nCOMPONENT Comp1(\nDECLS\n\tREAL x[n] UNITS u_m\nREAL H UNITS \"mol/l\"\nEND COMPONENT"
+                ]
+            }
+        },
+        {
+            "variable_description": {
+                "description": [
+                    "Variables can optionally a description to improve readability.",
+                    "They are a string after the variable declaration and units",
+                    "Recommendation: they don't have to include the units of the variable, since they are in the string UNITS"
+                ],
+                "example": [
+                    "REAL speed UNITS \"m/s\" \"This is the aircraft speed\"",
+                    "REAL R  = 0.015\tUNITS u_Ohm\t  \"Resistencia de armadura\"",
+                    "REAL Ke = 0.18\t \"Constante f.e.m. inversa\"",
+                    "OUT mech_rot m_out\t\t\"Eje mecánico de salida (rotacional)\"",
+                    "COMPONENT Cntrl_PID_user IS_A Controller \"Standard proportional-integral-derivative controller\"",
+                    "ENUM EndPosBehaviour end_pos = end_I\t UNITS no_units\t\"End position behaviour\""
+                ]
+            }
+        },
+        {
+            "range": {
+                "description": "For numeric variables (REAL or INTEGER) of components or ports, EL allows you to define a range of validity. During simulation, if the value of any variable exceeds the defined limits, EcosimPro generates a warning. This range is defined using the RANGE keyword",
+                "example": [
+                    "REAL v RANGE 0.5,1.5",
+                    "REAL A_exit = 1. UNITS u_m2 RANGE ZERO,Inf \"Exit area\""
+                ]
+            }
+        }
+    ],
+    "libraries": {
+        "description": "A library in EcosimPro is a set of items. The items could be components, port types, global variables, classes and functions which are related to the same area.",
+        "items": [
+            "Abstract components",
+            "Components",
+            "Ports ",
+            "Enumeration types (ENUM and SET_OF)",
+            "Functions",
+            "Classes",
+            "External pre-declaration functions (FORTRAN, C and C++)",
+            "External pre-declaration classes (FORTRAN, C and C++)",
+            "Global variables (REALs, INTEGERs, BOOLEANs, STRINGs, tables and multi-dimensional arrays)",
+            "USE statements (to reuse components from other libraries)",
+            "External files with tables",
+            "Partitions",
+            "Experiments",
+            "Decks"
+        ],
+        "standard_libraries": [
+            {
+                "name": "MATH",
+                "description": "Mathematical functions, constants, units, and basic utilities; common base for the rest of the libraries."
+            },
+            {
+                "name": "PORTS_LIB",
+                "description": "Definitions of ports and signal types (analog, Boolean, electrical, mechanical, etc.) for interconnecting components."
+            },
+            {
+                "name": "ELECTRICAL",
+                "description": "Library for modeling transient and steady electrical systems in EcosimPro."
+            },
+            {
+                "name": "MECHANICAL",
+                "description": "Library for modeling mechanical rotational and translational systems in EcosimPro."
+            },
+            {
+                "name": "THERMAL",
+                "description": "Components for thermal networks (temperatures and heat flows) and transfer (conduction, convection, sources)."
+            },
+            {
+                "name": "HYDRAULIC",
+                "description": "Hydraulic components (lines/volumes, pumps, valves, tanks) and fluid properties for pressure/flow circuits."
+            },
+            {
+                "name": "CONTROL",
+                "description": "Continuous and discrete control blocks (PID, filters, signal generators, discretizers, compensators, zeros/poles)."
+            },
+            {
+                "name": "DEFAULT_LIB",
+                "description": "Library with usage examples."
+            }
+        ]
+    },
+    "simulation": {
+        "time_variables": [
+            {
+                "description": "global variables in EL related to time"
+            },
+            {
+                "elements": [
+                    {
+                        "name": "TIME",
+                        "description": "actual integration time",
+                        "example": ""
+                    },
+                    {
+                        "name": "TIMEP",
+                        "description": "beginning time of actual integration step",
+                        "example": ""
+                    },
+                    {
+                        "name": "TSTOP",
+                        "description": "final simulation time",
+                        "example": ""
+                    },
+                    {
+                        "name": "CINT",
+                        "description": "communication interval for providing results",
+                        "example": ""
+                    },
+                    {
+                        "name": "LAST_INTEGRATION_STEP",
+                        "description": "size of the previous integration step",
+                        "example": ""
+                    }
+                ]
+            }
+        ],
+        "transient_solvers": [
+            {
+                "name": "DASSL",
+                "description": "DASSL (dense)"
+            },
+            {
+                "name": "DASSL_SPARSE",
+                "description": "DASSL (sparse)"
+            },
+            {
+                "name": "RK4",
+                "description": "Explicit fixed-step Runge-Kutta of order 4"
+            },
+            {
+                "name": "RK45",
+                "description": "Explicit variable-step Runge-Kutta-Fehlberg"
+            },
+            {
+                "name": "AM1, AM2 and AM4",
+                "description": "Implicit fixed-step Adams-Moulton of orders 1, 2 and 4"
+            },
+            {
+                "name": "IDAS",
+                "description": "Implicit Differential-Algebraic solver (dense)"
+            },
+            {
+                "name": "IDAS_SPARSE",
+                "description": "Implicit Differential-Algebraic solver (sparse)"
+            },
+            {
+                "name": "EULER",
+                "description": "Euler explicit fixed-step method"
+            },
+            {
+                "name": "BACKEULER",
+                "description": "Implicit fixed-step Euler (dense)"
+            },
+            {
+                "name": "BACKEULER_SPARSE",
+                "description": "Implicit fixed-step Euler (sparse)"
+            },
+            {
+                "name": "CVODE_AM",
+                "description": "ODE solver using Adams-Moulton method (dense)"
+            },
+            {
+                "name": "CVODE_BDF",
+                "description": "ODE solver using backward differentiation formula (dense)"
+            },
+            {
+                "name": "CVODE_BDF_SPARSE",
+                "description": "DE solver using backward differentiation formula (sparse)"
+            }
+        ],
+        "steady_solvers": [
+            {
+                "name": "NR",
+                "description": "It uses a modified Powell’ hybrid algorithm. Adapted version of MINCPACK with changes in some different areas (default)"
+            },
+            {
+                "name": "MINPACK",
+                "description": "It uses a modified Powell’ hybrid algorithm. This is the original algorithm from the ISML library"
+            }
+        ]
+    },
+    "components": [
+        {
+            "structure": [
+                "A Component in EL is formed by this template, in always that order: (ABSTRACT) COMPONENT Compo1 IS_A ParentCompo (construction_parameters) \"description\"\n\t PORTS\n\t DATA\n\t DECLS\n\t OBJECTS\n\t TOPOLOGY\n\t INIT\n\t DISCRETE\n\t CONTINUOUS\nEND COMPONENT",
+                "If the blocks aren't in that order, an error will occur.",
+                "Abstract components cannot be instantiated directly, neither in a schematic nor in the TOPOLOGY block of another component, because they don't have physical sense. Instead, they can be used as parent components, because they have a structure that several components may have in common (for example, an inlet and an outlet port and conservation of mass and energy)."
+            ]
+        },
+        {
+            "blocks": [
+                {
+                    "name": "construction parameters",
+                    "description": "Known parameters. Immutable after creating the partition, affect structure, used for array sizes or to alter mathematical model. Can be modified when instantiating the component.Never are used to pass a real number to be used in the component. They are written using parenthesis close to the component name.",
+                    "syntax": "(data_type) data_name = (value) UNITS (units) \"Description\"",
+                    "example OK": [
+                        "COMPONENT Variable_Types (BOOLEAN construction_bool = FALSE \"Boolean parameter\", INTEGER n = 5 \"Integer parameter\")\nEND COMPONENT",
+                        "USE MATH\nCOMPONENT Variable_Types\n\tDATA\n\t\tINTEGER int = 1 \"Integer variable\"\n\t\tREAL real = 0.25 UNITS u_m\n\t\tBOOLEAN bool\nEND COMPONENT"
+                    ],
+                    "example NOT OK": "COMPONENT Variable_Types (BOOLEAN construction_bool \"Boolean parameter\", INTEGER n \"Integer parameter\")\nEND COMPONENT",
+                    "valid_statements": [
+                        "variable declarations"
+                    ]
+                },
+                {
+                    "name": "PORTS",
+                    "description": "Ports are connection interfaces between components. The PORTS section in components defines instance of valid ports.",
+                    "syntax": "(IN | OUT port_type IDENTIFIER (,IDENTIFIER) [(parameters_init)] ( CARDINALITY range )? STRING_VALUE?",
+                    "special_notes": [
+                        "qualifier IN indicates that the port will be used for input and OUT for output",
+                        "ports must be IN or OUT",
+                        "\"port_type\" is the defined type of the port.",
+                        "IDENTIFIER is the name of the port (several can be declared on the same line).",
+                        "\"parameters_init\" is an optional list of the init construction parameters (if the port requires them).",
+                        "\"CARDINALITY range\" is an optional flag to specify the minimum and maximum number of allowed connectionsto this port. If this flag is not present there are no restrictions on the number of allowed connections. Two formats are valid: \"CARDINALITY min, max\" and \"CARDINALITY value\". The first format is used to specify a range of minimum and maximum number of allowed connections, e.g., CARDINALITY 0,2. The second format imposes a unique valid number of connections, e.g., \"CARDINALITY 1\". The second format is equivalent to \"CARDINALITY value, value\".",
+                        "\"STRING_VALUE\" is an optional field to write a short description of the port object.",
+                        "If the port requires a constructor parameter initialization, they are passed as arguments",
+                        "You can create arrays of ports",
+                        "The variables in a PORT can have two prefixes: SUM and EQUAL. When using SUM in multiple connection the addition of all those variables must be 0, when used EQUAL all variables will be identical. EcosimPro introduces automatically those equations in the system during the partition creation",
+                        "ports can inherit with modifier IS_A"
+                    ],
+                    "connection_restrictions": [
+                        "There are two groups of restrictions: limits on the number of ports that can be connected together and limits on the modes of ports connected together.",
+                        "The first limitation implies the second; in other words, if a port type does allow multiple connections, this implies that one of the port’s connections must be mode IN and the other mode OUT",
+                        "multiple connections are possible but only if several IN mode ports are connected to an OUT port, or vice versa.",
+                        "In a port definition, the restriction conditions for an IN mode port may be different to those for an OUT mode port. ",
+                        "The SINGLE modifier expressly forces all connections for a port type to be single. If no mode is specified, the restriction applies to all ports of this type, regardless of mode.",
+                        "If either of the modifiers IN or OUT is added, the restriction only applies to ports with that mode. The modifier SINGLE IN is used to forbid multiple connections at IN ports",
+                        "If there are no EQUAL or SUM modifiers on any of the variables, only non-multiple connections from an OUT port to an IN port are allowed.",
+                        "If there are multiplicity modifiers on some but not all the variables, multiple connections are valid if the CONTINUOUS block of the port definition has equations which define variables with no multiplicity information as a function of other port variables.",
+                        "Even when multiple connections are allowed, connections to ports of the same type (IN to IN, OUT to OUT) are not allowed if any of the multiplicity modifiers have a mode restriction. For example, the fluid port allows multiple connections but not IN to IN or OUT to OUT as there are mode restrictions on the energy flow and temperature variables: E (SUM IN) and T (EQUAL OUT)."
+                    ],
+                    "example OK": [
+                        "PORTS\n\tOUT analog_signal (n = 1) s_out\t\t\"Outlet signal \"\n\tIN bool_signal (n = 1) s_bool\"Boolean signal\"",
+                        "ABSTRACT COMPONENT comp_twoPorts\n\t\t\tPORTS\n\t\t\t\tIN ports_elec pi \"input port\"\n\t\t\t\tOUT ports_elec po CARDINALITY 0,2 \"output port\"\n\t\t\tCONTINUOUS\n\t\t\t\tpi.i = po.i\n\t\t\tEND COMPONENT",
+                        "COMPONENT ChemicalReactor(SET_OF(Chemical) mix)\n\t\t\tPORTS\n\t\t\t\tIN fluid fin(mix)\n\t\t\t\tOUT fluid fout(mix)\n\t\t\tEND COMPONENT",
+                        "COMPONENT ChemicalVector(INTEGER NX= 3)\n\t\t\tPORTS\n\t\t\t\tIN fluid fin[NX]\n\t\t\t\tOUT fluid fout[NX]\n\t\t\tEND COMPONENT"
+                    ],
+                    "valid_statements": [
+                        "ports declarations"
+                    ]
+                },
+                {
+                    "name": "DATA",
+                    "description": "DATA are input data to the mathematical model; i.e., their value does not change over time. Defines static parameters and constants used in the component. They can be modified after creating the partition and during the simulation, but must have an initial value. When the component is instantiated in another component the value of data can be changed in its declaration in the TOPOLOGY bock. When this happens, it can be assigned a new value or it can be linked with a data (DATA block) or a variable (DECLS block) of the macrocomponent.",
+                    "bnf_grammar": "data_s ::= (CONST? data_type general_id_s ( '=' init_expression )?",
+                    "syntax": "(data_type) data_name = (value) UNITS (units) \"Description\"",
+                    "example OK": [
+                        "USE MATH\nCOMPONENT Variable_Types\n\tDATA\n\t\tINTEGER int = 1 UNITS u_m \"Integer variable\"\n\t\tREAL real = 1.5 UNITS \"m\" \"Real variable\"\n\t\tBOOLEAN bool = TRUE\nEND COMPONENT",
+                        "COMPONENT comp_fluidCircuit\n\t\t\tTOPOLOGY\n\t\t\t\tcomp_Pipe p1 (length = 0.5, diameter = 2)\n\t\t\tEND COMPONENT",
+                        "COMPONENT comp_fluidCircuit\n\t\t\tDATA\n\t\t\t\tREAL len1 = 0.5\n\t\t\t\tREAL dia1 = 2\n\t\t\tTOPOLOGY\n\t\t\t\tcomp_Pipe p1 (length = len1, diameter = 2, speed = 3)\n\t\t\tEND COMPONENT",
+                        "COMPONENT comp_fluidCircuitM\n\t\t\tDECLS\n\t\t\t\tREAL len1 = 0.5\n\t\t\t\tREAL dia1 = 2\n\t\t\tTOPOLOGY\n\t\t\t\tcomp_Pipe p1 (length = len1 + 3, diameter = dia1, speed = mySpeed)\n\t\t\tCONTINUOUS\n\t\t\t\tmySpeed[1] = sin(TIME)\n\t\t\t\tmySpeed[2] = cos(TIME)\n\t\t\tEND COMPONENT"
+                    ],
+                    "example NOT OK": "USE MATH\nCOMPONENT Variable_Types\n\tDATA\n\t\tint = 1 UNITS u_m \"Integer variable\"\n\t\tREAL real UNITS \"m\" \"Real variable\"\n\t\tBOOLEAN bool\nEND COMPONENT",
+                    "valid_statements": [
+                        "data declarations"
+                    ]
+                },
+                {
+                    "name": "DECLS",
+                    "description": "The DECLS block in components is used to declare of variables that normally changes during simulation. Declaration of local variables and types. Optionally, they can include a default value.",
+                    "bnf_grammar": [
+                        "decl_s ::= ( (PRIVATE|HIDDEN)? (BOUND|EXPL|DISCR|ALG)? var_decl\n\t\t\t\t\t\t\t| ENUM IDENTIFIER '=' '{' EOL* enum_elem_s EOL* '}' STRING_VALUE?\n\t\t\t\t\t\t\t| enum_set_decl '=' '{' EOL* enum_elem_s EOL* '}' STRING_VALUE?\n\t\t\t\t\t\t\t| CLOSE identifier_s ( '=' init_expression )?",
+                        "var_decl ::= CONST? data_type id_s ( '=' initVal )? (UNITS STRING_VALUE)? obj_range? STRING_VALUE?"
+                    ],
+                    "syntax": "(data_type) data_name {= (default_value)} UNITS (units) \"Description\"",
+                    "modifiers": [
+                        "For continuous variables (REAL variables without the qualifier DISCR) the modeller can use the following operators. In all cases (except EXPL, where it is mandatory) the operators introduces suggestions for the sorting algorithms.",
+                        {
+                            "name": "BOUND",
+                            "usage": "mark this variable as a candidate to become boundary when more variables than equations are detected."
+                        },
+                        {
+                            "name": "EXPL",
+                            "usage": "in case of algebraic loops, try to find this variable explicitly (not as algebraic)"
+                        },
+                        {
+                            "name": "ALG",
+                            "usage": "in case of algebraic loops, try to use this variable as algebraic."
+                        },
+                        {
+                            "name": "PRIVATE",
+                            "usage": "The optional prefix PRIVATE forbids the variable to be viewed or used in the experiments: it becomes internal to the models and no access to them is allowed."
+                        },
+                        {
+                            "name": "HIDDEN",
+                            "usage": "It hides the variable in the experiment reports and plotters in the monitor but the variable can be used. HIDDEN is typically used for variables that are not very representative in the simulation reports but that the modeller may sometimes need to use."
+                        },
+                        {
+                            "name": "DISCR",
+                            "usage": "By default all REAL variables declared in DECLS block will be considered continuous. This means that EcosimPro will try to find an equation in the CONTINUOUS block for calculating this variable. All other types will be considered as discrete variables. The modeller can use the operator DISCR for declaring a REAL variable as discrete by definition. Only real variables can be DISCR."
+                        }
+                    ],
+                    "special_notes": [
+                        "In DECLS block it is possible to define new enumerative and SET_OF types and CLOSE statements internal to the components; nevertheless, it is recommended to declare them at library level.",
+                        "The main difference between the DATA and DECLS blocks is that variables declared in DECLS change during the simulation. Although constants can be defined, they are only local and cannot be configured from outside, unlike DATA which can be"
+                    ],
+                    "example OK": [
+                        "USE MATH\nCOMPONENT Variable_Types (INTEGER n = 5)\n\tDECLS\n\t\tINTEGER int UNITS u_m \"Integer variable\"\n\t\tREAL real UNITS \"m\" \"Real variable\"\n\t\tREAL x[n]\nEND COMPONENT",
+                        "COMPONENT comp_decls\nDATA\n\tBOOLEAN Contidition = TRUE\nDECLS\n\t-- Continuous variables (they must be REAL)\n\tREAL z\n\tREAL v[3]\n\t-- Arrays of discrete REAL variables\n\tDISCR REAL z1\n\tDISCR REAL v1[3]\n\t-- Constant values using the keyword CONST\n\tCONST REAL PI = 3.1415\n\t-- Set z variable as private, forbid its use in the experiments\n\tPRIVATE REAL z2\n\t-- Set z variable as hidden, hide it in experiment reports by default\n\tHIDDEN REAL z3\n\t-- Declaration of enumeration types\n\tENUM Chemicals = {CO2, H2O, O2}\n\t-- Sets of enumeration types\n\tSET_OF(Chemicals) mix = {CO2, H2O}\n\t-- 1, 2 and 3 dimensional tables used locally\n\tTABLE_1D tab = { { 0.0, 0.5, 1.0}, -- XValues\n\t\t\t\t\t\t{67.23, 4.83, -3.23}} -- Output\n\tINTEGER numberOfCartridges\nDISCRETE\n\tWHEN ( Condition == TRUE ) THEN\n\t\tnumberOfCartridges = 1\n\tEND WHEN\nEND COMPONENT\n"
+                    ],
+                    "example NOT OK": "USE MATH\nCOMPONENT Variable_Types (INTEGER n = 5)\n\tDECLS\n\t\tint UNITS u_m \"Integer variable\"\n\t\treal UNITS \"m\" \"Real variable\"\n\t\tARRAY x[n]\nEND COMPONENT",
+                    "valid_statements": [
+                        "variables declarations"
+                    ]
+                },
+                {
+                    "name": "OBJECTS",
+                    "description": "Declaration and instantiation of classes within components. Classes are not components, they can't include physical behaviour and are declared with CLASS.",
+                    "syntax": "class_instance instance_name ",
+                    "example OK": "CLASS class_point2D\nEND CLASS\n\nCOMPONENT comp_point2D\n\tOBJECTS\n\t\tclass_point2D point2D\nEND COMPONENT",
+                    "example NOT OK": "CLASS class_point2D\nEND CLASS\n\nCOMPONENT comp_point2D\n\tTOPOLOGY\n\t\tclass_point2D point2D\nEND COMPONENT",
+                    "valid_statements": [
+                        "classes (not components) instantiations",
+                        "IF-INSERT for classes"
+                    ]
+                },
+                {
+                    "name": "TOPOLOGY",
+                    "description": "Defines instances of components and their interconnections using CONNECT statements. Components are not classes, they can include discrete events and continuous equations. Multiple connections can be done with the statements EXPAND/EXPAND_BLOCK. Each line must define a component or an array of components.",
+                    "statements": "CONNECT, EXPAND, EXPAND_BLOCK",
+                    "syntax": [
+                        "comp_instance (const_parameters) instance_name[number_of_instances] (data)",
+                        "CONNECT port1 TO port2"
+                    ],
+                    "example OK": [
+                        "COMPONENT thermal_example\nTOPOLOGY\n\tTHERMAL.Wall  (n = 1,nodes = 10) Wall_1 (mat = GCF,rho = 1000,cp = 500,k = 0.1,TemperatureDependance =  TRUE ,A = 1,e = 0.001,init_mode = Constant_Temp,To = 290,To_linear = { 290,290} ,To_table = { { 0,1} ,{ 290,290} } ) \n\tTHERMAL.Wall  (n = 1,nodes = 10) Wall_2 (mat = Aluminum,rho = 1000,cp = 500,k = 0.1,TemperatureDependance =  TRUE ,A = 1,e = 0.02,init_mode = Constant_Temp,To = 290,To_linear = { 290,290} ,To_table = { { 0,1} ,{ 290,290} } ) \n\tTHERMAL.Wall  (n = 1,nodes = 10) Wall_3 (mat = GCF,rho = 1000,cp = 500,k = 0.1,TemperatureDependance =  TRUE ,A = 1,e = 0.001,init_mode = Constant_Temp,To = 290,To_linear = { 290,290} ,To_table = { { 0,1} ,{ 290,290} } ) \n\tTHERMAL.DNode  (n = 1) DNode (Label = \"Node Label\",qi = 0,Boundary =  FALSE ,To = 290,C = 0.001) \n\tTHERMAL.GR  (n = 1) GR (REF = 0.5) \n\n\n\tCONNECT Wall_1.tp_out TO Wall_2.tp_in\n\tCONNECT Wall_2.tp_out TO Wall_3.tp_in\n\tCONNECT Wall_3.tp_out TO GR.tp_in\n\tCONNECT GR.tp_out TO DNode.tp_in\nEND COMPONENT",
+                        "EXPAND_BLOCK (i IN 1, N) \nCONNECT comp_array[i].port TO another_port \nCONNECT comp_2_array[i].port TO another_port \nEND EXPAND_BLOCK",
+                        "EXPAND (i IN 1, N) \nCONNECT comp_array[i].port TO another_port",
+                        "COMPONENT Inertia_Coupling\n\tDATA\n\t\tREAL I1 = 0.5\t\t  UNITS u_kgm2\t\"Inertia of shaft 1\"\n\t\tREAL I2 = 1.0\t\t  UNITS u_kgm2\t\"Inertia of shaft 2\"\n\tTOPOLOGY\n\t\tMECHANICAL.R_Inertia J1(I = I1) \n\t\tMECHANICAL.R_Inertia J2(I = I2)\n\t\t\n\t\tCONNECT J1.m_out TO J2.m_in\nEND COMPONENT",
+                        "COMPONENT Inertia_Coupling\n\tDATA\n\t\tREAL I = 0.5\t\t  UNITS u_kgm2\t\"Inertia of shafts\"\n\n\tTOPOLOGY\n\t\tMECHANICAL.R_Inertia J[2](I = I) \n\t\t\n\t\tCONNECT J[1].m_out TO J[2].m_in\nEND COMPONENT"
+                    ],
+                    "example NOT OK": "COMPONENT Inertia_Coupling\n\tDATA\n\t\tREAL I1 = 0.5\t\t  UNITS u_kgm2\t\"Inertia of shaft 1\"\n\t\tREAL I2 = 1.0\t\t  UNITS u_kgm2\t\"Inertia of shaft 2\"\n\tTOPOLOGY\n\t\tMECHANICAL.R_Inertia J1(I = I1) , J2(I = I2)\n\t\t\n\t\tCONNECT J1.m_out TO J2.m_in\nEND COMPONENT\n",
+                    "valid_statements": [
+                        "components instantiations",
+                        "IF-INSERT for components",
+                        "CONNECT ... TO",
+                        "IF-INSERT for connections",
+                        "EXPAND/EXPAND_BLOCK in instantiations and connections"
+                    ]
+                },
+                {
+                    "name": "INIT",
+                    "description": "Initialization block with prioritized initialization statements.",
+                    "syntax": "",
+                    "example OK": [
+                        "x = 5",
+                        "y = sin(x)",
+                        "z = 0 AFTER 5",
+                        "FOR (i IN 1, 3) v[i] = i END FOR",
+                        "ASSERT(x > 0, \"x must be positive\")",
+                        "IF (x < 5) THEN y = 0 END IF",
+                        "STOP(\"End of init\")"
+                    ],
+                    "example NOT OK": [
+                        "x' = -x  --  No se permite ecuación diferencial en INIT",
+                        "WHEN (x > 1) THEN x = 0 END WHEN  --  WHEN solo en DISCRETE",
+                        "ZONE(x > 0) y = 1 OTHERS y = 0  --  ZONE solo en CONTINUOUS"
+                    ],
+                    "valid_statements": [
+                        "assignments",
+                        "delayed assignments (AFTER,AT)",
+                        "function calls",
+                        "FOR/WHILE loops",
+                        "sequential ASSERT",
+                        "IF-THEN-ELSE blocks",
+                        "STOP \"message\"",
+                        "IF-INSERT"
+                    ]
+                },
+                {
+                    "name": "DISCRETE",
+                    "description": "Contains statements executed at discrete time events.",
+                    "syntax": "",
+                    "example OK": [
+                        "WHEN (x < 0) THEN x = max(0,1) END WHEN",
+                        "ASSERT(x >= 0, \"x went negative\")",
+                        "EXPAND (i IN 1, 2) WHEN (y[i] > 10) THEN y[i] = min(10,x) END WHEN END EXPAND",
+                        "IF (flag = 0) THEN\n\treset = TRUE\nELSEIF (flag = 1)\n\treset = FALSE\nELSE\n\treset = FALSE\nEND IF",
+                        "IF (NOT b AND x > 9.8) \n m= 1\nEND IF\nWHEN ((x > 9.8) AND NOT ( (n != 7) OR (m == 6) )\n  r= 2\nEND WHEN"
+                    ],
+                    "example NOT OK": [
+                        "x = sin(TIME)  --  Solo se permite dentro de WHEN",
+                        "x' = -x  --  Ecuaciones diferenciales no válidas aquí",
+                        "ZONE(...)  --  No permitido"
+                    ],
+                    "valid_statements": [
+                        "when",
+                        "discrete_assert",
+                        "discrete_expand",
+                        "function_call",
+                        "for_loop",
+                        "if_then_else",
+                        "if-insert"
+                    ]
+                },
+                {
+                    "name": "CONTINUOUS",
+                    "description": "Block defining continuous equations governing the simulation behavior. The equations are acausal and they describe the dynamic behaviour of the component.",
+                    "syntax": "",
+                    "statements": "DAE equations, Continuous EXPAND, IF (condition) INSERT, Conditional equations (ZONE, continuous IF), SEQUENTAL blocks, PARALLEL block",
+                    "example OK": [
+                        "x' = -x",
+                        "x= sin(TIME)",
+                        "x'' -4.5*y = 676.2*z'",
+                        "x= ZONE (y > 0) sin(TIME) OTHERS cos(TIME)",
+                        "x= IF (y > 0) sin(TIME) ELSE cos(TIME)",
+                        "x = ZONE(flag = 1) 0ZONE(flag = 2) 0.5 OTHERS 1",
+                        "IF (const_param == 1) INSERT\n\tx' = -x\nEND IF",
+                        "EXPAND (i IN 1, 5) q[i] = f[i] * v[i]",
+                        "EXPAND_BLOCK (i IN 1, 5)\n\tq[i] = f[i] * v[i]\n\tv[i] = vo*i\nEND EXPAND_BLOCK",
+                        "SEQUENTIAL\n\tx = y + 1\n\tz = x * 2\nEND SEQUENTIAL",
+                        "SEQUENTIAL\n FOR(i IN 1,2)\n v[i]= 3*cos(TIME)\n END SEQUENTIAL",
+                        "rnorm3 = IF (rnorm > r_min) rnorm**3 ELSEIF (rnorm = r_min) rnorm**3 ELSE r_min**3",
+                        "PARALLEL \"case1\"\n nx= cos(TIME)\nEND PARALLEL"
+                    ],
+                    "example NOT OK": "",
+                    "special_notes": [
+                        "IF (cond) INSERT solo puede usarse con parámetros de construcción o constantes",
+                        "ZONE(cond) eq1 OTHERS eq2 detecta cruce exacto y solo se permite en CONTINUOUS",
+                        "IF cond THEN eq1 ELSE eq2 se permite pero no detecta evento de cruce"
+                    ],
+                    "valid_statements": [
+                        "continuous_expand",
+                        "function_call",
+                        "continuous_if_else",
+                        "continuous_zone",
+                        "if-insert",
+                        "parallel",
+                        "sequential"
+                    ]
+                }
+            ]
+        }
+    ],
+    "functions": {
+        "structure": [
+            "A function in EL is formed by this template, in always that order: FUNCTION Funtion_Type Function_Name (Argument_List) \"description\"\n\tDECLS\n\tOBJECTS\n\tBODY\nEND FUNCTION"
+        ],
+        "notes": [
+            "IMPORTANT: When you are passing arrays as arguments the array is passed as reference (OUT mode), even if you use the IN prefix, but it is very important to inform the compiler about this for the equations sorting algorithms to know if this array is calculated by the function (OUT mode) or it is just passed as input (IN mode). Be aware of the side effects of not respecting the convention of the prefix."
+        ],
+        "blocks": [
+            {
+                "name": "Function_Type",
+                "description": "Functions can have one of the EL data types. For example, they can be REAL functions, in which case they must have a RETURN statement with a real variable. They can be NO_TYPE, in which case they can have arguments of type OUT. In general, NO_TYPE functions don't need a RETURN statement. In the rest of functions, RETURN statement is mandatory and it must be accompanied of a variable of the same type as the function."
+            },
+            {
+                "name": "Argument_List",
+                "description": "Defines the arguments passed to functions. They can be inputs (modifier IN) or outputs (modifier OUT). If an argument doesnt't have a modifier, it's interpreted as an input. If an argument has a value assigned, it means that it's an optional argument and that value is its default value; these arguments must be the last of the list."
+            },
+            {
+                "name": "DECLS",
+                "description": "Declarations of local variables within functions."
+            },
+            {
+                "name": "OBJECTS",
+                "description": "Instantiates objects required within the function."
+            },
+            {
+                "name": "BODY",
+                "description": "Main block containing executable statements of the function. Same rules as in the INIT block of a component apply to the BODY block of functions or methods of classes."
+            }
+        ],
+        "example": [
+            "FUNCTION REAL bound\n\t(\n\tIN REAL x\t\t\t\t\t\t\t \"Input value\",\n\tIN REAL xmin\t\t\t\t\t\t \"Bottom bound\",\n\tIN REAL xmax\t\t\t\t\t\t \"Top bound\"\n\t)\n\n\tDECLS\n\t\tREAL y\t\t\t\t\t\t\t \"Output value\"\n\n\tBODY\n\t\tIF (x < xmin) THEN\n\t\t\ty = xmin\n\t\tELSEIF (x > xmax) THEN\n\t\t\ty = xmax\n\t\tELSE\n\t\t\ty = x\n\t\tEND IF\n\n\t\tRETURN y\n\nEND FUNCTION",
+            "FUNCTION REAL max\n\t(\n\tREAL x,\n\tREAL y\n\t)\n\n\tBODY\n\t\tIF (x > y) THEN\n\t\t\tRETURN x\n\t\tEND IF\n\n\t\tRETURN y\n\nEND FUNCTION",
+            "-- Purpose:\n--\t To evaluate the multiplication of two polynomial.\nFUNCTION NO_TYPE PolyMult\n\t(\n\tINTEGER k,\n\tREAL a[k],\n\tINTEGER l,\n\tREAL b[l],\n\tOUT INTEGER n,\n\tOUT REAL c[n]\n\t)\n\n\tBODY\n\t\tn = k + l\n\n\t\tFOR (i IN 1,n)\n\t\t\tc[i] = 0.\n\t\tEND FOR\n\n\t\tFOR (i IN 1,k)\n\t\t\tFOR (j IN 1,l)\n\t\t\t\tc[i+j-1] = c[i+j-1] + a[i] * b[j]\n\t\t\tEND FOR\n\t\tEND FOR\n\nEND FUNCTION",
+            "--Purpose:\n--\t Function calculating the integer part of a real.\nFUNCTION INTEGER int\n\t(\n\tIN REAL real_number\n\t)\n\n\tBODY\n\n\tRETURN real_number\n\nEND FUNCTION",
+            "FUNCTION REAL Fluid_beta_vs_T(\n\t\t  IN ENUM  ThFluids chem\t\t\"Working chemical constituent\",\n\t\t  IN REAL  T\t\t\t UNITS u_K\t\t \"Temperature \",\n\t\t  OUT INTEGER itab\t\t\t \t\t \"Index in table\")\n\n\t  DECLS\n\t\t  REAL B\n\t\t  INTEGER ier\n\n\t  BODY\n\t\t  IF (setofPos(ThFluids, chem) > 9) THEN\n\t\t\t\tB\t=  propLiq_vs_T(chem, LIQ_beta, T, itab)\n\t\t  ELSE\n\t\t\t\tB\t=  1/T\n\t\t  END IF\n\n\t\t  RETURN B\nEND FUNCTION",
+            "FUNCTION REAL square(IN REAL x,OUT REAL y) \"square example\"\nBODY\n\ty = x * x\nEND FUNCTION\n",
+            "FUNCTION NO_TYPE func_calculate2(IN REAL x,IN REAL v[],IN INTEGER size_v)\nBODY\n\tv[1]= 3\n\tx= 4.5 + v[1]\nEND FUNCTION\n"
+        ]
+    },
+    "ports": {
+        "structure": {
+            "declaration": "PORT <name> [(IS_A <base_ports>)] [(<construction_params>)] [SINGLE [IN|OUT]] [\"description\"]",
+            "variables": "List of port variables with optional modifiers",
+            "continuous": "Optional CONTINUOUS block for internal equations",
+            "termination": "END PORT"
+        },
+        "construction_parameters": {
+            "purpose": "Used to initialize port-specific constants like array sizes",
+            "properties": {
+                "type": [
+                    "INTEGER",
+                    "REAL",
+                    "STRING",
+                    "ENUMERATIVE",
+                    "BOOLEAN",
+                    "FILEPATH"
+                ],
+                "default_value": "Optional",
+                "usage": "Fixed at instantiation, not modifiable at runtime"
+            }
+        },
+        "modifiers": {
+            "multiplicity": [
+                "EQUAL",
+                "SUM"
+            ],
+            "directional": [
+                "EQUAL IN",
+                "EQUAL OUT",
+                "SUM IN",
+                "SUM OUT"
+            ],
+            "semantic_hints": {
+                "BOUND": "Marks variable as boundary condition candidate",
+                "EXPL": "Suggests variable to be computed explicitly",
+                "DISCR": "Indicates discrete variable (user-updated)",
+                "ALG": "Marks as algebraic (for solvers)"
+            },
+            "visibility": {
+                "PRIVATE": "Invisible in experiments; internal use only",
+                "HIDDEN": "Hidden in UI/reports but accessible programmatically"
+            }
+        },
+        "connection_equations": {
+            "rules": [
+                "SUM: flow variables, sum to zero across connections",
+                "EQUAL: potential variables, same value across ports",
+                "No modifier: no equation generated",
+                "Directional modifiers apply only to ports with matching direction"
+            ],
+            "example": {
+                "electrical_port": {
+                    "SUM": "current (i)",
+                    "EQUAL": "voltage (v)"
+                },
+                "fluid_port": {
+                    "SUM IN": "energy (E)",
+                    "EQUAL OUT": "temperature (T)"
+                }
+            }
+        },
+        "restrictions": {
+            "types": {
+                "SINGLE": {
+                    "description": "Restrict to a single total connection, regardless of direction",
+                    "example": "SINGLE",
+                    "applies_to": "Applies to any mode (IN/OUT)"
+                },
+                "SINGLE IN": {
+                    "description": "Allows multiple connections from one OUT port, but only one IN port",
+                    "example": "SINGLE IN",
+                    "applies_to": "Only to IN ports of the specified type."
+                },
+                "SINGLE OUT": {
+                    "description": "Allows multiple connections from one input port (IN), but only one output (OUT)",
+                    "example": "SINGLE OUT",
+                    "applies_to": "Only to OUT ports of the specified type"
+                }
+            },
+            "connection_rules": {
+                "default_behavior_without_multiplicity": {
+                    "description": "If EQUAL or SUM is not specified, only OUT → IN connections are allowed, and no multiple connections",
+                    "example": "PORT p\n  REAL signal\nEND PORT"
+                },
+                "rule_on_multiplicity_modifiers": {
+                    "description": "When a port has variables with EQUAL or SUM, multiple connection is allowed, as long as the mode restrictions are respected",
+                    "notes": [
+                        "If there are multiple variables and only some have EQUAL or SUM, there must be an equation in CONTINUOUS that relates the others to the ones that do have multiplicity",
+                        "modifiers (e.g., SUM IN) impose additional restrictions on mode combinations (IN/IN or OUT/OUT)."
+                    ],
+                    "example": "PORT fluid\n  SUM IN REAL E\n  EQUAL OUT REAL T\nEND PORT"
+                },
+                "mode_compatibility": {
+                    "IN-OUT": "Permitted according to general rules.",
+                    "IN-IN": "Prohibited if there is an address in the modifier (e.g. SUM IN)",
+                    "OUT-OUT": "Prohibited if there is direction in the modifier (e.g. EQUAL OUT).",
+                    "note": "If there is no explicit address (only SUM or EQUAL), IN-IN and OUT-OUT could be valid."
+                }
+            },
+            "implications": {
+                "implicit_restrictions": {
+                    "description": "The existence of constraints can be derived from the lack of equations in the CONTINUOUS bloc",
+                    "consequence": "EL prohibits multiple connection if it cannot resolve unspecified variables.."
+                },
+                "override_possibility": {
+                    "description": "The imposition of SINGLE can be avoided if all variables have defined behaviour (SUM or EQUAL) or are related in CONTINUOUS.",
+                    "example": "E = w * T in the CONTINUOUS allows multiple ports to be connected even though E and T are addressed.."
+                }
+            },
+            "good_practices": [
+                "Use SINGLE IN on signal or Boolean ports when it does not make sense to receive multiple signals.",
+                "Use SUM for physical flows (current, flow, heat)",
+                "Use EQUAL for potential variables (voltage, pressure, temperature).",
+                "If there is multiplicity, document the expected flow directions well."
+            ]
+        },
+        "continuous_block": {
+            "purpose": "Defines internal DAE behavior of port variables",
+            "note": "Only one CONTINUOUS block is retained in isolated IN-OUT pairs"
+        },
+        "examples": {
+            "analog_signal": "PORT analog_signal (INTEGER n = 1 UNITS no_units\t\"Number of outputs\")\tSINGLE IN  \"Analog signals 1D port\"\n\tEQUAL OUT REAL signal[n]\t\t UNITS no_units\t\"Analog signal values\"\nEND PORT\n",
+            "boolean": "\nPORT bool_signal (INTEGER n = 1\tUNITS no_units\t\"Number of outputs\"  ) SINGLE IN  \"Boolean signals 1D port\"\n\tEQUAL OUT BOOLEAN signal[n]\t UNITS no_units\t\"Boolean signal values\"\nEND PORT\n",
+            "rotational_port": "\nPORT mech_rot \"1D rotational flange\"\n\tSUM\tREAL T\t\t\tUNITS u_Nm\t\t\"Torque \"\n\tEQUAL REAL omega\t\tUNITS u_rad_s\t\"Absolute angular velocity\"\n\t\t\tREAL n\t\t\tUNITS u_rpm\t\t\"Angular velocity\"\n\n\tCONTINUOUS\n\tomega = n * (2*MATH.PI/60)\nEND PORT\n",
+            "translational_port": "\nPORT mech_trans \"1D translational flange\"\n\tSUM\tREAL F\t\t\tUNITS u_N\t\t\"Force\"\n\tEQUAL REAL s\t\t\tUNITS u_m\t\t\"Absolute position\"\nEND PORT\n",
+            "electrical": "\nPORT elec\t \"Electrical pin\" \n\t EQUAL REAL v \t\tUNITS u_V\t\t\"Potential at pin\"\t\n\t SUM\tREAL i \t\tUNITS\tu_A\t\t\"Current flowing into the pin\"\nEND PORT\n\n",
+            "thermal": "\nPORT thermal (INTEGER n = 1 UNITS no_units\t\"Size of thermal port arrays\")\t\"1D thermal port\"\n\tEQUAL REAL Tk[n] =  293.15\tUNITS u_K\t\t\tRANGE  0,TMAX\t\t\"Kelvin  Temperature Array\"\n\tEQUAL REAL Tc[n] =\t20.\t  UNITS u_C\t\t\t\t\t\t\t\t\t\"Celsius Temperature Array\"\n\tSUM\tREAL  q[n]\t\t\t\t UNITS u_W\t\t\t\t\t\t\t\t\t\"Heat Flow Array\"\nCONTINUOUS\n\t EXPAND (j IN 1, n)\n\t\t  Tc[j] = Tk[j] - TZERO\nEND PORT\n",
+            "basic": "PORT Basic1 \"basic port1\"\n\tSUM REAL a\nEND PORT\nPORT Basic2 \"basic port2\"\n\tEQUAL REAL b\nEND PORT\nPORT myPort IS_A Basic1, Basic2\n\tSUM REAL c\nEND PORT"
+        }
+    },
+    "classes": {
+        "structure": {
+            "declaration": "CLASS <name> [(IS_A <base_classes>)] [(<construction_params>)] [\"description\"]",
+            "variables": "DECLS: declarations of class variables (supports basic EL types, e.g., REAL, INTEGER, STRING, BOOLEAN, ENUMERATIVE, FILEPATH)",
+            "objects": "OBJECTS: encapsulated instances of other classes",
+            "methods": "METHODS: internal method definitions (METHOD ... BODY ... END METHOD)",
+            "termination": "END CLASS"
+        },
+        "construction_parameters": {
+            "purpose": "Used typically for dimensioning arrays or configuring class behavior at construction.",
+            "properties": {
+                "type": [
+                    "INTEGER",
+                    "REAL",
+                    "STRING",
+                    "ENUMERATIVE",
+                    "BOOLEAN",
+                    "FILEPATH"
+                ],
+                "default_value": "Optional",
+                "usage": "Fixed at instantiation, not modifiable at runtime"
+            },
+            "rules": {
+                "classes_no_defaults": "Classes do not allow default values for construction parameters (components do). They must be provided at instantiation time."
+            },
+            "examples": {
+                "parametric_class": "CLASS class_MyMatrix (INTEGER rows, INTEGER cols) \"class representing a 2d matrix\"\nDECLS\n   REAL values[rows,cols]\nEND CLASS",
+                "instantiation": "FUNCTION NO_TYPE fUseClass()\nOBJECTS\n   MyMatrix (rows = 5, cols = 7) m\nEND FUNCTION",
+                "friends_class": "CLASS class_clBestFriends (INTEGER N)\nDECLS\n   STRING m_name = \"\"\n   INTEGER m_phones[N]\nMETHODS\n   METHOD NO_TYPE setFriend(STRING name, INTEGER n, INTEGER phones[])\n   BODY\n      m_name = name\n      FOR(i IN 1, n)\n         m_phones[i] = phones[i]\n      END FOR\n   END METHOD\n   METHOD STRING asString()\n   DECLS\n      STRING st\n   BODY\n      WRITES(st, \"%s phones:\", m_name)\n      FOR(i IN 1, N)\n         WRITES(st, \"%s %d\", st, m_phones[i])\n      END FOR\n      RETURN st\n   END METHOD\nEND CLASS",
+                "friends_usage": "FUNCTION NO_TYPE func_fTestClassConstPars()\nDECLS\n   CONST INTEGER nphones = 3\n   INTEGER phones[nphones] = {11111, 22222, 33333}\nOBJECTS\n   clBestFriends (N = 3) fr\nBODY\n   fr.setFriend(\"Lucas\", nphones, phones)\n   WRITE(\"Friend: %s\n\", fr.asString())\nEND FUNCTION",
+                "matrix_with_objects": "CLASS class_clMyMatrix(INTEGER rows, INTEGER cols)\nDECLS\n   REAL m_x[rows,cols] = 1.0\nOBJECTS\n   TABLE m_tables[rows,cols]\nEND CLASS"
+            }
+        },
+        "modifiers": {
+            "inheritance": {
+                "keyword": "IS_A",
+                "description": "Indicates single or multiple inheritance from one or more classes (parents separated by commas).",
+                "single_inheritance_example": "CLASS class_point3D IS_A class_point2D \"a 3D point\"\nDECLS\n   PRIVATE REAL z\nMETHODS\n   METHOD NO_TYPE set3D(IN REAL valueX, IN REAL valueY, IN REAL valueZ)\n   BODY\n      set2D(valueX, valueY)\n      z = valueZ\n   END METHOD\n   METHOD NO_TYPE get3D(OUT REAL valueX, OUT REAL valueY, OUT REAL valueZ)\n   BODY\n      get2D(valueX, valueY)\n      valueZ = z\n   END METHOD\nEND CLASS",
+                "multiple_inheritance_example": "CLASS statusClass \"a status class\"\nDECLS\n   PRIVATE BOOLEAN status\nMETHODS\n   METHOD NO_TYPE setStatus(IN BOOLEAN sta)\n   BODY\n      status = sta\n   END METHOD\n   METHOD BOOLEAN getStatus()\n   BODY\n      RETURN status\n   END METHOD\nEND CLASS\n\nCLASS point3D IS_A point2D, statusClass \"a 3D point\"\n  ...\nEND CLASS"
+            },
+            "visibility": {
+                "PRIVATE": "Variable or method intended for internal use; not exposed outside the class.",
+                "PUBLIC": "Visible outside the class (default if not marked PRIVATE).",
+                "HIDDEN": "Hidden in UI/reports but accessible programmatically (when supported)."
+            },
+            "semantic_hints": {
+                "DESCRIPTION": "Optional string to describe the class; if multi-line, use \n as separator."
+            }
+        },
+        "methods": {
+            "signature": "METHOD <return_type|NO_TYPE> <name>([param_list])\nBODY\n  statements\nEND METHOD",
+            "return_types": [
+                "INTEGER",
+                "REAL",
+                "BOOLEAN",
+                "STRING",
+                "NO_TYPE (void)"
+            ],
+            "parameter_modes": {
+                "IN": "Passed by value (copy); not modifiable inside the method.",
+                "OUT": "Passed by reference/pointer; can be modified by the method."
+            },
+            "notes": [
+                "All basic types default to IN if not specified.",
+                "Methods define functional behavior; they do not introduce continuous equations at class scope."
+            ],
+            "examples": {
+                "add": "METHOD REAL add(IN REAL a, IN REAL b) \"adds two numbers\"\nBODY\n  RETURN a + b\nEND METHOD",
+                "method1": "METHOD REAL method1(REAL a, BOOLEAN b, STRING s) \"description here\"\nBODY\n  RETURN a + 1\nEND METHOD",
+                "method2_out": "METHOD NO_TYPE method2(IN REAL a, IN REAL b, OUT result) \"adds two numbers\"\nBODY\n  result = a + b\nEND METHOD"
+            }
+        },
+        "connection_equations": {
+            "not_applicable": true,
+            "notes": "Classes do not define port multiplicity or connection equations directly. Such behavior belongs to ports or to equations inside components."
+        },
+        "restrictions": {
+            "definition": {
+                "name": "General restrictions",
+                "description": "Class definition is declarative; valid blocks are DECLS, OBJECTS, METHODS. Equations are not written at class scope (use methods or component/port contexts)."
+            },
+            "inheritance": {
+                "multiple_inheritance": "Allowed via IS_A with comma-separated parents.",
+                "order_notes": "When multiple inheritance is used, resolve name clashes explicitly (e.g., by scoping or renaming)."
+            },
+            "methods": {
+                "body_rules": "METHOD must contain BODY ... END METHOD; use input/output modes (IN/OUT) in parameter lists as needed.",
+                "side_effects": "Methods act like functions/procedures; they do not themselves create continuous equations."
+            }
+        },
+        "continuous_block": {
+            "purpose": "Not applicable at class scope.",
+            "note": "DAE behavior is defined in components/ports; classes are high-level wrappers for C++-like structuring."
+        },
+        "examples": {
+            "basic_class": "CLASS class_point2D \"class representing a 2D point\"\nDECLS\n   PRIVATE REAL x\n   PRIVATE REAL y\nMETHODS\n   METHOD NO_TYPE set2D(IN REAL valueX, IN REAL valueY)\n   BODY\n      x = valueX\n      y = valueY\n   END METHOD\n   METHOD NO_TYPE get2D(OUT REAL valueX, OUT REAL valueY)\n   BODY\n      valueX = x\n      valueY = y\n   END METHOD\nEND CLASS",
+            "syntax_template": "class_def: CLASS IDENTIFIER ( IS_A scoped_id_s)? (constr_params)?\n  DESCRIPTION?\n  ( DECLS var_object_decl_s )?\n  ( OBJECTS class_instance_stm_s )?\n  ( METHODS method_def_s )?\nEND CLASS"
+        }
+    },
+    "experiment": {
+        "examples": [
+            "EXPERIMENT exp1 ON freeBodies.default\n\tINIT\n\t\t-- Dynamic variables\n\t\tOrbitalBody1.r[x] = 0.\n\t\tOrbitalBody1.r[y] = 0.\n\t\tOrbitalBody1.r[z] = 0.\n\t\tOrbitalBody1.r[x]' = 0.\n\t\tOrbitalBody1.r[y]' = 0.\n\t\tOrbitalBody1.r[z]' = 0.\n\t\tOrbitalBody2.r[x] = 2.507E-3\n\t\tOrbitalBody2.r[y] = 0.\n\t\tOrbitalBody2.r[z] = 0.\n\t\tOrbitalBody2.r[x]' = 0.\n\t\tOrbitalBody2.r[y]' = 1018. * MStoAUD\n\t\tOrbitalBody2.r[z]' = 0.\n\tBODY\n\t\tREPORT_TABLE(\"reportAll\", \" * \")\n\t\tTIME = 0.\n\t\tTSTOP = 31.\n\t\tCINT = 0.05\n\t\tINTEG()\nEND EXPERIMENT",
+            "EXPERIMENT exp1 ON hydro_circuit1.default\n\tINIT\n\t\t-- Dynamic variables\n\t\tHydTank1.H[1] = 3.\n\t\tHydTank1.T = 288.\n\t\tHydTank2.H[1] = 1.\n\t\tHydTank2.T = 288.\n\tBOUNDS\n\t\tHydTank1.hp_in.T = 0.\n\t\tHydTank1.hp_in.w = 0.\n\t\tHydTank2.hp_out.w = 0.\n\tBODY\n\t\tREPORT_TABLE(\"reportAll\", \" * \")\n\t\tTIME = 0.\n\t\tTSTOP = 30.\n\t\tCINT = 1.\n\t\tINTEG()\nEND EXPERIMENT",
+            "EXPERIMENT sine ON Example_2DegreeOfFreedomSystem.default\n\tDECLS\n\tOBJECTS\n\tINIT\n\t\t-- initial values for state variables\n\t\tSpringDamper.s_rel = 0\n\tBOUNDS\n\t\t-- Set equations for boundaries: boundVar = f(TIME;...)\n\t\tMass_2.m_out.F = 0\n\tBODY\n\t\t-- REPORT_TABLE(\"results.rpt\", \"*\") -- create an automatic report of variables\n\t\tDEBUG_LEVEL= 1\t-- valid range is [0,4]\n\t\tIMETHOD= CVODE_BDF -- integration method\n\t\t-- set tolerances for transient (REL_ERROR & ABS_ERROR) and steady (TOLERANCE) solvers\n\t\tREL_ERROR = 1e-06\n\t\tABS_ERROR = 1e-06\n\t\tTOLERANCE = 1e-06\n\t\tINIT_INTEG_STEP = -1 -- initial integration step size (-1 uses default) \n\t\tMAX_INTEG_STEP = -1 -- maximum integration step size (-1 uses default) \n\t\tNSTEPS = 1 -- Only for explicit solvers use CINT/NSTEPS as integration step size\n\t\tREPORT_MODE = IS_EVENT -- Report results at every CINT and event detection.\n\t\t-- simulate a transient in range[TIME,TSTOP] reporting at every CINT\n\t\tForce_val.source = Source_Sine\n\t\tForce_val.Period = 20\n\t\tTIME = 0\n\t\tTSTOP = 50\n\t\tCINT = 0.1\n\t\tINTEG()\nEND EXPERIMENT",
+            "EXPERIMENT exp1 ON Example_2DegreeOfFreedomSystem.default\n\tDECLS\n\tOBJECTS\n\tINIT\n\t\t-- initial values for state variables\n\t\tSpringDamper.s_rel = 0\n\tBOUNDS\n\t\t-- Set equations for boundaries: boundVar = f(TIME;...)\n\t\tMass_2.m_out.F = 0\n\tBODY\n\t  -- REPORT_LIST(\"reportAll\",\"*\") -- create an automatic report of variables\n\t\tDEBUG_LEVEL= 1\t\t-- valid range is [0,4]\n\t\tTOLERANCE = 1e-06 -- steady solver relative tolerance \n\t\tTOLTYPE= RELTOL -- convergence criteria\n\t\tSTEADY()\nEND EXPERIMENT",
+            "EXPERIMENT exp1 ON component_blocks.default\n\tDECLS\n\tOBJECTS\n\tINIT\n\tBOUNDS\n\t\t-- Set equations for boundaries: boundVar = f(TIME;...)\n\t\tsignal_port.signal[1] = 0\n\t\tthermal_port.Tk[1] = 293.15\n\t\tthermal_port.q[1] = 0\n\tBODY\n\t  -- REPORT_LIST(\"reportAll\",\"*\") -- create an automatic report of variables\n\t\tDEBUG_LEVEL= 1\t\t-- valid range is [0,4]\n\t\tTOLERANCE = 1e-06 -- steady solver relative tolerance \n\t\tTOLTYPE= RELTOL -- convergence criteria\n\t\tSTEADY()\n\t\tPRINT(\"A = $A\")\n\t\tPRINT(\"d = $d\")\nEND EXPERIMENT",
+            "EXPERIMENT exp1 ON aircraftGear.default\n\tINIT\n\t\t-- Dynamic variables\n\t\ty3 = 0.\n\t\ty3' = 0.\n\t\ty2 = 0.\n\t\ty2' = 0.\n\t\tx = 0.\n\t\tx' = 60.96\n\tBODY\n\t\tREPORT_TABLE(\"rep.h5\", \"*\")\n\t\tTSTOP = 10.\n\t\tCINT = 0.05\n\t\tk2 = 20000 AFTER 5\n\t\tFOR (i IN 1,5)\n\t\t\tk2 = i*10000\n\t\t\tTIME = 0\n\t\t\tINTEG()\n\t\t\tRESET()\n\t\tEND FOR\nEND EXPERIMENT\""
+        ]
+    },
+    "statements": {
+        "discrete_statements": {
+            "blocks_allowed": "Only DISCRETE block for components",
+            "items": [
+                {
+                    "name": "assert",
+                    "description": "Checks the consistency of the model by verifying logical conditions during simulation.",
+                    "structure": {
+                        "format": "ASSERT (expression)  \"message\"",
+                        "expression": "Boolean condition that must be met.",
+                        "level": "Severity level that defines the action if the condition fails.",
+                        "message": "Message displayed to the user if the assertion fails."
+                    },
+                    "levels": [
+                        {
+                            "name": "NOTE",
+                            "effect": "Displays an informational message. The simulation continues."
+                        },
+                        {
+                            "name": "WARNING",
+                            "effect": "Something unexpected has occurred, but it is not serious. The simulation continues."
+                        },
+                        {
+                            "name": "ERROR",
+                            "effect": "Serious error. The simulation continues but review is recommended."
+                        },
+                        {
+                            "name": "KILLPOINT",
+                            "effect": "Ends the current calculation but continues with the following ones (if any)."
+                        },
+                        {
+                            "name": "FATAL",
+                            "effect": "Ends the simulation immediately."
+                        }
+                    ],
+                    "examples": [
+                        {
+                            "code": "ASSERT (tp_out.radiation < maxRad) FATAL \"DANGER, RADIATION!\"",
+                            "explanation": "If radiation exceeds maxRad, stop the simulation with a fatal message."
+                        },
+                        {
+                            "code": "ASSERT (tp_out.radiation < maxRad) issueError(212)",
+                            "explanation": "Calls an error function defined in the library with code 212."
+                        }
+                    ],
+                    "constraints": [
+                        "Can only be used in sequential blocks: INIT, DISCRETE, BODY, METHOD, etc.",
+                        "Not permitted in CONTINUOUS."
+                    ],
+                    "source": {
+                        "document": "EcosimPro Modelling Language Manual 2024",
+                        "section": "7.1.8: ASSERT Statements"
+                    }
+                },
+                {
+                    "name": "IF",
+                    "description": "In sequential statements the IF statement works like in C++/Java: if a condition is met, execute a block; optional ELSEIF/ELSE blocks can follow.",
+                    "structure": "IF (condition) THEN\n  statements\nELSEIF (condition) THEN\n  statements\nELSE\n  statements\nEND IF",
+                    "examples": [
+                        "IF (x == 4) THEN\n\tpr = min(x + 1, z)\nELSEIF (x > 2) THEN\n\tpr = floor(max(x + 2, z))\nELSE\n\tpr = ceil(x + 3)\nEND IF"
+                    ]
+                },
+                {
+                    "name": "WHILE",
+                    "description": "Executes a block of statements as long as the entry condition evaluates to TRUE.",
+                    "structure": "WHILE (condition)\n  statements\nEND WHILE",
+                    "examples": [
+                        "WHILE (index < maxIndex)\n\tb[index] = 0.0\n\tindex = index + 1\nEND WHILE"
+                    ]
+                },
+                {
+                    "name": "FOR",
+                    "description": "Iterates over a range or set executing statements. Supports implicit iterator variables and explicit loop variables.",
+                    "structure": "FOR(i IN start, end [EXCEPT ...])\n  statements\nEND FOR\n\nFOR (i IN EnumSet [EXCEPT value1, value2])\n  statements\nEND FOR\n\n-- Regular variable form\nFOR (init; condition; increment)\n  statements\nEND FOR",
+                    "examples": [
+                        "FOR(i IN 1, 10)\n\tv[i] = 1\nEND FOR",
+                        "FOR(i IN 1, 10 EXCEPT 5)\n\tv[i] = 1\nEND FOR",
+                        "FOR (i IN Colors)\n\tv[i] = 2\nEND FOR",
+                        "FOR (j IN Colors EXCEPT yellow, brown)\n\tv[j] = 3\nEND FOR",
+                        "FUNCTION NO_TYPE fun_example1()\nDECLS\n\tINTEGER i, j\n\tREAL k[5]\nBODY\n\tFOR ( i = 0; i < 5; i = i + 1 )\n\t\tk[i] = 0.0\n\tEND FOR\nEND FUNCTION"
+                    ]
+                },
+                {
+                    "name": "IF-INSERT",
+                    "description": "Conditionally inserts sets of equations decided at partition-generation time. The condition must depend on construction parameters or constants, because it's evaluated before creating the partition. This is also not equivalent to IF_ELSE - its condition can depend on a data or on a variable.",
+                    "structure": "IF (cond) INSERT\n  equations\nELSEIF (cond) INSERT\n  equations\nELSE\n  equations\nEND IF",
+                    "examples": [
+                        "COMPONENT comp (BOOLEAN incl_cond = FALSE)\nDECLS\n\tREAL x\n\tREAL z\nDISCRETE\nIF (incl_cond) INSERT\n\tIF (x == 4) THEN\n\t\tpr = min(x + 1, z)\n\tELSEIF (x > 2) THEN\n\t\tpr = floor(max(x + 2, z))\n\tELSE\n\t\tpr = ceil(x + 3)\n\tEND IF\nEND IF\nEND COMPONENT"
+                    ]
+                }
+            ]
+        },
+        "sequential_statements": {
+            "blocks_allowed": [
+                "BODY block for functions   ",
+                "BODY block for experiments ",
+                "INIT block for components  ",
+                "Body part of WHEN statement"
+            ],
+            "items": [
+                {
+                    "name": "AFTER",
+                    "description": "You can create a time event using within a sequential assignment, for example to execute the assignment after some time",
+                    "structure": "assignment AFTER <time>",
+                    "examples": [
+                        "-- The heater turns off 4 seconds after the maximum temperature has been reached\nCOMPONENT Heater\nDECLS\n\t REAL T UNITS u_C \"Temperature\"\n\t BOOLEAN Heater_ON UNITS no_units\nDISCRETE\n\t WHEN (T > 50) THEN\n\t\t  Heater_ON = FALSE AFTER 4\n\t  END WHEN\n\t  WHEN (T < 20) THEN\n\t\t  Heater_ON = FALSE\n\t  END WHEN\nEND COMPONENT",
+                        "DISCRETE\nb= 5 AFTER 3",
+                        "DISCRETE\nx = b * (sin(c) + 3.14) / b AFTER 2.5",
+                        "COMPONENT comp_sequential_statement\nDECLS\n DISCR REAL a\n REAL b = 2\n REAL c = 3\nINIT\n a = b\n a = 3 AFTER 1\n a = c AFTER 2\n a = b+c AFTER 3\n a = b AFTER 4\nCONTINUOUS\n b' = sin(TIME)\n c' = cos(TIME)\nEND COMPONENT"
+                    ]
+                },
+                {
+                    "name": "AT",
+                    "description": "You can create a time event using within a sequential assignment, for example to execute the assignment at an absoulte time",
+                    "structure": "assignment AT <absolute_time>",
+                    "examples": "EXPERIMENT exp1 ON comp_sequential_statement.default\nBODY\n a = 6 AT 6\n a = b AT 8\n a += 1 AT 9\n INTEG_TO(10,0.1)\nEND EXPERIMENT"
+                },
+                {
+                    "name": "BREAK",
+                    "description": "Terminates the nearest enclosing FOR or WHILE loop immediately. Execution continues after the loop.",
+                    "structure": "BREAK",
+                    "examples": [
+                        "FUNCTION NO_TYPE testBreak()\nDECLS\n\tINTEGER index = -1\n\tCONST INTEGER M = 5\n\tSTRING people[M] = {\"Willian\", \"John\", \"Joe\", \"Lucas\", \"Andrew\"}\nBODY\n\tFOR(i IN 1, M)\n\t\tIF (people[i] == \"Joe\") THEN\n\t\t\tindex = i\n\t\t\tBREAK\n\t\tEND IF\n\tEND FOR\n\tWRITE(\"Joe index= %d\n\", index)\nEND FUNCTION"
+                    ]
+                },
+                {
+                    "name": "CONTINUE",
+                    "description": "Skips the remaining statements in the current iteration and proceeds with the next loop iteration (checks condition; in FOR also performs the increment).",
+                    "structure": "CONTINUE",
+                    "examples": [
+                        "FUNCTION NO_TYPE testContinue()\nDECLS\n\tINTEGER index = -1\n\tINTEGER count = 0\n\tCONST INTEGER M = 5\n\tSTRING people[M] = {\"Willian\", \"John\", \"Joe\", \"Lucas\", \"Andrew\"}\nBODY\n\tFOR(i IN 1, M)\n\t\tIF (people[i].find(\"Jo\") != 0) THEN\n\t\t\tWRITE(\"%s index= %d\n\", people[i], i)\n\t\t\tCONTINUE\n\t\tEND IF\n\t\tcount += 1\n\tEND FOR\n\tWRITE(\"count= %d\n\", count)\nEND FUNCTION\n\n-- Output:\n-- John index= 2\n-- Joe index= 3\n-- count= 3"
+                    ]
+                },
+                {
+                    "name": "STOP",
+                    "description": "Halts the simulation immediately (FATAL category) and prints a message enclosed in quotes.",
+                    "structure": "STOP \"message\"",
+                    "examples": [
+                        "COMPONENT bouncingBall\nDATA\n\tREAL g = 9.80665 \"Gravity (m/s^2)\"\n\tREAL k = 0.8 \"Restitution coefficient (-)\"\nDECLS\n\tREAL h = 10. \"Height (m)\"\nDISCRETE\n\t-- Event when bouncing on the ground\n\tWHEN (h < 0) THEN\n\t\th' = -k * h'\n\tEND WHEN\n\t-- Event to detect stopping the simulation\n\tWHEN (h < -1e-6) THEN\n\t\tSTOP \"****** End of simulation: height < -1e-6\"\n\tEND WHEN\nCONTINUOUS\n\th'' = -g\nEND COMPONENT"
+                    ]
+                }
+            ]
+        },
+        "continuous_statements": {
+            "blocks_allowed": "CONTINOUS block for components  ",
+            "items": [
+                {
+                    "name": "Differential equations",
+                    "description": "In CONTINUOUS blocks, derivatives are written with apostrophes: x' (first), x'' (second), x''' (third), etc.",
+                    "structure": "Equations with derivatives inside CONTINUOUS, e.g.:\n  x' = ...\n  x'' = ...\n  y''' + a*y' + b*y = f(TIME)",
+                    "examples": [
+                        "y''' + 3*y' - y = cos(TIME)",
+                        "x - 2*z + sin(TIME*w') = 0",
+                        "x' = sin(TIME)",
+                        "x'' - 3*x' = z + cos(TIME)"
+                    ]
+                },
+                {
+                    "name": "SEQUENTIAL",
+                    "description": "Permite introducir código puramente secuencial dentro del bloque CONTINUOUS. Dentro de SEQUENTIAL no se permiten ecuaciones diferenciales/algebraicas; actúa como una función ordenada por dependencias de entrada/salida.",
+                    "structure": "SEQUENTIAL\n  sequential_statements\nEND SEQUENTIAL",
+                    "examples": [
+                        "COMPONENT comp_sequential_block\nDATA\n  REAL lowerLimit = 9.9\n  REAL upperLimit = 8.1\nDECLS\n  REAL x\n  REAL y\nCONTINUOUS\n  SEQUENTIAL\n    IF (x < lowerLimit) THEN\n      y = lowerLimit\n    ELSEIF (x > upperLimit) THEN\n      y = upperLimit\n    ELSE\n      y = x\n    END IF\n  END SEQUENTIAL\n  x = sin(TIME) + 9\nEND COMPONENT\n-- y es salida calculada secuencialmente; x debe estar disponible antes."
+                    ]
+                },
+                {
+                    "name": "PARALLEL",
+                    "description": "Evolución de SEQUENTIAL en la que el modelador etiqueta bloques paralelizables con el mismo nombre. El generador produce código C++ paralelo para bloques con etiqueta idéntica.",
+                    "structure": "PARALLEL \"tag\"\n  sequential_statements\nEND PARALLEL",
+                    "examples": [
+                        "COMPONENT comp_basicParallel\nDECLS\n  REAL v[10000] = 0\n  REAL z[10] = 0\n  REAL kr = 0\nCONTINUOUS\n  PARALLEL \"parallel1\"\n    FOR (j IN 1,100)\n      FOR (i IN 1,10000)\n        v[i] = cos(TIME) * sin(TIME) + z[1]\n      END FOR\n    END FOR\n  END PARALLEL\n  kr = sin(TIME)\n  EXPAND(i IN 1,10) z[i]' = cos(TIME)\nEND COMPONENT\n\nCOMPONENT comp_compoParallel\nTOPOLOGY\n  Comp_basicParallel b1, b2, b3, b4\nEND COMPONENT\n-- Al instanciar b1..b4, los cuatro bloques \"parallel1\" pueden ejecutarse en paralelo."
+                    ]
+                },
+                {
+                    "name": "EXPAND",
+                    "description": "Inserts one equation multiple times iterating over a range or set; EXPANDs can be nested.",
+                    "structure": "EXPAND(i IN range_or_set [EXCEPT ...]) equation",
+                    "examples": [
+                        "-- example 1\nEXPAND(i IN 1,4) h_out[i] = h_in[i]",
+                        "-- example 2\nEXPAND(i IN Chemicals EXCEPT CO2, O2) h_out[i]' = h_in[i]",
+                        "-- example 3\nEXPAND(i IN 1,3)\n\tEXPAND(j IN 1,4 EXCEPT i)\n\t\tnewMatrix(j,i) = matrix(i,j)"
+                    ]
+                },
+                {
+                    "name": "EXPAND_BLOCK",
+                    "description": "Inserts multiple equations per iteration; must be closed with END EXPAND_BLOCK.",
+                    "structure": "EXPAND_BLOCK(i IN range_or_set)\n  equations\nEND EXPAND_BLOCK",
+                    "examples": [
+                        "-- example 4\nEXPAND_BLOCK(i IN 1,3)\n\tx[i] = y[i] + 4\n\tx1[i] = y1[i] + 5\nEND EXPAND_BLOCK",
+                        "-- example 5\nEXPAND_BLOCK(i IN 1,3)\n\tEXPAND_BLOCK(j IN 1,2)\n\t\tEXPAND_BLOCK(k IN 1,2)\n\t\t\tx[i,j,k] = y[i,j,k] + 4\n\t\t\tx1[i,j,k] = y1[i,j,k] + 5\n\t\tEND EXPAND_BLOCK\n\tEND EXPAND_BLOCK\nEND EXPAND_BLOCK"
+                    ]
+                },
+                {
+                    "name": "IF-INSERT",
+                    "description": "Conditionally inserts sets of equations decided at partition-generation time. The condition must depend on construction parameters or constants, because it's evaluated before creating the partition. This is not equivalent to IF-THEN - that is a discrete statement. This is also not equivalent to IF_ELSE - its condition can depend on a data or on a variable.",
+                    "structure": "IF (cond) INSERT\n  equations\nELSEIF (cond) INSERT\n  equations\nELSE\n  equations\nEND IF",
+                    "examples": [
+                        "-- example 1\nCOMPONENT cinsert(INTEGER sw = 2)\nDECLS\n\tREAL x\n\tREAL y\nCONTINUOUS\n\tIF (sw == 1) INSERT\n\t\t3*x - 6*y = 9\n\t\t4*x - 4*y = 9\n\tELSEIF (sw == 2) INSERT\n\t\t2*x + 2*y = 545\n\t\t4*x - 4*y = 54\n\tELSE\n\t\t7*x + 6*y = 34\n\t\t8*x - 8*y = 75\n\tEND IF\nEND COMPONENT",
+                        "-- example 2\nCOMPONENT compo2(BOOLEAN flag = TRUE)\nDECLS\n\tREAL x\n\tREAL y\nCONTINUOUS\n\tIF (flag == TRUE) INSERT\n\t\tx = 4.45*y + 5\n\tELSE\n\t\tx = 7.8*y + 8\n\tEND IF\nEND COMPONENT"
+                    ]
+                },
+                {
+                    "name": "ZONE",
+                    "description": "Selects which equation is valid depending on conditions, detecting exact crossing times.",
+                    "structure": "variable_or_derivative = ZONE (cond1) expr1\n  ZONE (cond2) expr2\n  ...\n  OTHERS expr_default",
+                    "examples": [
+                        "-- example 1\nx = ZONE (m > 0) y + 3*z\n\tOTHERS y + 2*z",
+                        "-- example 2\nx = ZONE (m > 0 AND m < 2) y + 2*y\n\tZONE (m > 2 AND m < 4) y + 3*y\n\tZONE (m > 4) y + 4*y\n\tOTHERS y + 5*y",
+                        "-- example 3\nCOMPONENT comp_zone1 \"Zone example\"\nDATA\n\tREAL ymax = 0.8 UNITS no_units\n\tREAL ymin = -0.5 UNITS no_units\n\tREAL tau = 0.01 UNITS u_s \"Characteristic delay time\"\nDECLS\n\tREAL dy UNITS u_Hz \"Finite differences derivative\"\n\tREAL x UNITS no_units \"Main variable\"\n\tREAL y UNITS no_units \"Limited and delayed variable\"\nCONTINUOUS\n\tdy = (x - y) / tau\n\ty' = ZONE ((y > ymax) AND (dy > 0)) 0\n\t\tZONE ((y < ymin) AND (dy < 0)) 0\n\t\tOTHERS dy\nEND COMPONENT",
+                        "-- example 4\nCOMPONENT comp_zone\nDECLS\n\tCONST REAL eps = 0.1\n\tCONST REAL a = 1\n\tCONST REAL b = 1000\n\tREAL Vf, Vg\n\tREAL hf, hg\nINIT\n\tVf = 1\n\tVg = 1\n\thf = 100\n\thg = 100\nCONTINUOUS\n\tb*Vf' + a*hf' = ZONE(Vg < eps) 1 OTHERS hg/10\n\tb*Vg' + a*hg' = ZONE(Vf < eps) hf OTHERS 1\n\thf' = sin(TIME)\n\thg' = cos(TIME)\nEND COMPONENT"
+                    ]
+                },
+                {
+                    "name": "IF_ELSE (continuous)",
+                    "description": "Chooses between expressions based on a condition but does not detect exact crossing times (no rollback). This is not equivalent to an IF-THEN block - that is a discrete statement and can't be used in the CONTINUOUS block.",
+                    "structure": "variable = IF (condition) expr_true\n  ELSE expr_false",
+                    "examples": [
+                        "x = IF (m > 0 OR n == 0) y + 3*z\n\tELSE y + 2*z\n-- The integration time is not adjusted to find the exact crossing."
+                    ]
+                }
+            ]
+        },
+        "examples": [
+            "COMPONENT Vector (INTEGER dimensions=2) \nDECLS \n REAL v[dimensions]= 3 \nEND COMPONENT\nanother example:\nCOMPONENT Vector2 (SET_OF(Colors) favo= favorite)\nDECLS \n REAL v[favo]= 3 \nEND COMPONENT\nother example:\nCOMPONENT Test2 (BOOLEAN flag= TRUE)\nDECLS \n REAL x\nCONTINUOUS\nIF (flag == TRUE) INSERT\n\tx= cos(TIME)\nELSE\n\tx= sin(TIME)\nEND COMPONENT",
+            "ENUM Colors= { red, yellos, brown }\nSET_OF(Colors) favorites= { brown }\nCOMPONENT Vector (SET_OF(colores) favo=favorites)\n\nDECLS\n\n  REAL v[favo]= 0\n\nCONTINUOUS\n\n EXPAND(i IN favo)\n\t v[i]= cos(TIME)\nEND COMPONENT"
+        ],
+        "global_errors": [
+            {
+                "when": "Use of sentence not allowed in the current block",
+                "severity": "error",
+                "message": "This sentence is not allowed in this type of block."
+            },
+            {
+                "when": "Condition in IF INSERT depends on DATA or dynamic variable",
+                "severity": "error",
+                "message": "The IF-INSERT conditions only admits constant or parameter construction, and always in the CONTINUOUS block of a componenr."
+            },
+            {
+                "when": "Use of ZONE outside the CONTINUOUS block",
+                "severity": "error",
+                "message": "ZONE(cond) eq1 OTHERS eq2 can only be used in CONTINUOUS block for exact event detection."
+            }
+        ]
+    }
+}
